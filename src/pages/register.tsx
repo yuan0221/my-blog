@@ -6,46 +6,52 @@ import { history } from "umi";
 
 export default function () {
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function submit() {
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch('/api/register', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
       if (res.status !== 200) {
-        console.error(await res.text());
+        const errorText = await res.text();
+        console.error(errorText);
+        alert(errorText);
         return;
       }
       const data = await res.json();
-      alert(`欢迎回来，${data.name}`);
+      alert(`注册成功，欢迎加入，${data.name}`);
       history.push('/posts/create');
     } catch (err) {
-      console.error(err)
+      console.error(err);
+      alert('注册失败，请稍后重试');
     }
   }
 
   return <div className="w-full flex justify-center">
     <div className="container lg:px-64 px-8 pt-16">
-      <p className="text-3xl font-extrabold">用户登入</p>
+      <p className="text-3xl font-extrabold">用户注册</p>
       <div className="mt-8">
-        <p>邮箱</p>
+        <p>用户名</p>
+        <TextInput value={name} onChange={setName} />
+        <p className="mt-4">邮箱</p>
         <TextInput value={email} onChange={setEmail} />
         <p className="mt-4">密码</p>
         <TextInput value={password} onChange={setPassword} />
-        <Button onClick={submit}>登入</Button>
+        <Button onClick={submit}>注册</Button>
         <div className="mt-4">
-          <span className="text-gray-600">还没有账号？</span>
+          <span className="text-gray-600">已有账号？</span>
           <button
-            onClick={() => history.push('/register')}
+            onClick={() => history.push('/login')}
             className="ml-2 text-blue-600 hover:text-blue-800 underline"
           >
-            立即注册
+            立即登入
           </button>
         </div>
       </div>
