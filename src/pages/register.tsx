@@ -9,17 +9,18 @@ export default function () {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   async function submit() {
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, avatarUrl }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      if (res.status !== 200) {
+      if (res.status !== 201) {
         const errorText = await res.text();
         console.error(errorText);
         alert(errorText);
@@ -44,7 +45,10 @@ export default function () {
         <TextInput value={email} onChange={setEmail} />
         <p className="mt-4">密码</p>
         <TextInput value={password} onChange={setPassword} />
-        <Button onClick={submit}>注册</Button>
+        <p className="mt-4">头像 URL（可选）</p>
+        <TextInput value={avatarUrl} onChange={setAvatarUrl} placeholder="https://example.com/avatar.png" />
+        {avatarUrl && <img src={avatarUrl} alt="头像预览" className="mt-2 w-32 h-32 rounded-full object-cover" />}
+        <Button onClick={submit} disabled={!name || !email || !password}>注册</Button>
         <div className="mt-4">
           <span className="text-gray-600">已有账号？</span>
           <button
